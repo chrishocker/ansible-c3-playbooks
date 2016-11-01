@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: true
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: Apply any available updates
+      yum:
+        name: "*"
+        state: latest
+        update_cache: yes

@@ -1,0 +1,81 @@
+---
+- hosts: all
+  gather_facts: true
+  become_method: sudo
+  become_user: root
+  tasks:
+
+    - name: Ensure users are present
+      user:
+        name: "{{ item.name }}"
+        groups: wheel
+        state: present
+        uid: "{{ item.uid }}"
+      with_items:
+        - { name: "apone", uid: 1200 }
+        - { name: "gorman", uid: 1201 }
+        - { name: "hicks", uid: 1202 }
+
+    - name: Install needed software
+      yum:
+        name: "{{contact.item}}"
+        state: latest
+      with_items:
+        - chrony
+        - sudo
+        - rsyslog
+
+    - name: Ensure standard chrony config
+      copy:
+        src: files/chrony.conf
+        dest: /etc/chrony.conf
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: Ensure standard sudo config
+      copy:
+        src: files/sudoers
+        dest: /etc/sudoers
+        mode: 0640
+        owner: root
+        group: root
+
+    - name: Ensure log forwarding is configured
+      copy:
+        src: files/syslog
+        dest: /etc/rsyslog.d/forward.conf
+        mode: 0644
+        owner: root
+        group: root
+      notify: restart_syslog
+
+    - name: Ensure SELinux is enabled
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: Ensure SELinux booleans are set properly
+      seboolean:
+        name: "{{contact.item}}"
+        persistent: true
+        state: false
+      with_items:
+        - httpd_execmem
+        - selinuxuser_execstack
+        - selinuxuser_execheap
+      
+    - name: Ensure proper services are running
+      service:
+        name: "{{contact.item}}"
+        state: running
+        enabled: yes
+      with_items:
+        - rsyslog
+        - chronyd
+
+  handlers:
+    - name: restart_syslog
+      service:
+        name: rsyslog
+        state: restarted
