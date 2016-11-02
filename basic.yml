@@ -4,8 +4,7 @@
   become_method: sudo
   become_user: root
   tasks:
-    - name: Apply any available updates
+    - name: Install Apache
       yum:
-        name: "*"
+        name: httpd
         state: latest
-        update_cache: yes
