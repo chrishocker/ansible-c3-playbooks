@@ -13,7 +13,7 @@
       copy: src=index.html dest=/var/www/html/index.html
 
     - name: Configure index.html
-      command: sudo sed -i "s/nodename/$HOSTNAME/g" /var/www/html/index.html
+      command: sed -i "s/nodename/$HOSTNAME/g" /var/www/html/index.html
 
     - name: Restart Apache
       service:
