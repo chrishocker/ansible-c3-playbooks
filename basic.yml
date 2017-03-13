@@ -10,4 +10,9 @@
         state: latest
 
     - name: Install Hello World
-      copy: src=index.html dest=/var/www/index.html
+      copy: src=index.html dest=/var/www/html/index.html
+
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted
