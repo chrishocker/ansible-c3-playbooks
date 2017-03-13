@@ -10,7 +10,7 @@
         state: latest
 
     - name: Configure index.html
-      template: src=./index.j2 dst=/var/www/html/index.html
+      template: src=./index.j2 dest=/var/www/html/index.html
 
     - name: Restart Apache
       service:
