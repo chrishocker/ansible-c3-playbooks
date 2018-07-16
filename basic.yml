@@ -16,3 +16,9 @@
       service:
         name: httpd
         state: restarted
+
+    - name: Cofigure firewalld
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
