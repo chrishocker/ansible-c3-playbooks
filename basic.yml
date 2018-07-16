@@ -19,7 +19,7 @@
 
     - name: Cofigure firewalld
       firewalld:
-        zone: public
         service: http
         permanent: true
         state: enabled
+        immediate: yes
